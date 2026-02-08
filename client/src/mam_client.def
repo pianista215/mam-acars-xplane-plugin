@@ -1,0 +1,14 @@
+LIBRARY mam_client
+EXPORTS
+    MAM_Connect
+    MAM_Disconnect
+    MAM_IsConnected
+    MAM_IsPluginActive
+    MAM_RegisterDataRef
+    MAM_UnregisterDataRef
+    MAM_GetDouble
+    MAM_GetFloat
+    MAM_GetInt
+    MAM_GetUpdateCounter
+    MAM_GetRegisteredCount
+    MAM_GetErrorString

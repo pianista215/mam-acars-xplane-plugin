@@ -1,0 +1,31 @@
+# Visual Studio
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.ncb
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+UpgradeLog.htm
+
+# Build outputs
+*.xpl
+*.dll
+*.lib
+*.exp
+*.pdb
+*.ilk
+*.obj
+*.log
+
+# Claude
+.claude/
+CLAUDE.md
+
+# OS
+Thumbs.db
+Desktop.ini
+nul
