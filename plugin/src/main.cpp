@@ -1,6 +1,7 @@
 #include "XPLMPlugin.h"
 #include "XPLMProcessing.h"
 #include "XPLMUtilities.h"
+#include "XPLMDataAccess.h"
 #include "dataref_manager.h"
 #include "shared_memory.h"
 #include <cstring>
@@ -190,6 +191,30 @@ static void ProcessCommands()
                     cmd.resultCode = MAM_OK;
                 } else {
                     cmd.resultCode = MAM_ERROR_INVALID_ID;
+                }
+                break;
+            }
+
+            case MAM_CMD_CHECK_DATAREF: {
+                XPLMDataRef ref = XPLMFindDataRef(cmd.path);
+                cmd.resultCode = ref ? MAM_OK : MAM_ERROR_DATAREF_NOT_FOUND;
+                break;
+            }
+
+            case MAM_CMD_READ_STRING: {
+                XPLMDataRef ref = XPLMFindDataRef(cmd.path);
+                cmd.resultString[0] = '\0';
+                if (ref) {
+                    int len = XPLMGetDatab(ref, cmd.resultString, 0, MAM_STRING_VALUE_MAX - 1);
+                    if (len > 0) {
+                        if (len >= MAM_STRING_VALUE_MAX) len = MAM_STRING_VALUE_MAX - 1;
+                        cmd.resultString[len] = '\0';
+                        cmd.resultCode = MAM_OK;
+                    } else {
+                        cmd.resultCode = MAM_ERROR_TYPE_MISMATCH;
+                    }
+                } else {
+                    cmd.resultCode = MAM_ERROR_DATAREF_NOT_FOUND;
                 }
                 break;
             }

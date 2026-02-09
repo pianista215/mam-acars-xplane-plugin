@@ -51,6 +51,22 @@ MAM_API int MAM_RegisterDataRef(const char* path);
 MAM_API MamResult MAM_UnregisterDataRef(int id);
 
 /**
+ * @brief Check if a dataref exists in X-Plane (without registering it)
+ * @param path The dataref path (e.g., "sim/flightmodel/position/latitude")
+ * @return 1 if the dataref exists, 0 otherwise
+ */
+MAM_API int MAM_DataRefExists(const char* path);
+
+/**
+ * @brief Read a string dataref value directly (without registering)
+ * @param path The dataref path (e.g., "sim/aircraft/view/acf_ICAO")
+ * @param outBuffer Buffer to store the string
+ * @param bufferSize Size of the buffer
+ * @return MAM_OK on success, error code otherwise
+ */
+MAM_API MamResult MAM_GetString(const char* path, char* outBuffer, int bufferSize);
+
+/**
  * @brief Get a double value from a registered dataref
  * @param id The dataref ID
  * @param outValue Pointer to store the value

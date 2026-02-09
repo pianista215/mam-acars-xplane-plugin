@@ -6,6 +6,8 @@ EXPORTS
     MAM_IsPluginActive
     MAM_RegisterDataRef
     MAM_UnregisterDataRef
+    MAM_DataRefExists
+    MAM_GetString
     MAM_GetDouble
     MAM_GetFloat
     MAM_GetInt

@@ -209,6 +209,122 @@ MAM_API MamResult MAM_UnregisterDataRef(int id)
     return MAM_ERROR_MUTEX;
 }
 
+MAM_API int MAM_DataRefExists(const char* path)
+{
+    if (!g_shm) return 0;
+    if (!path || path[0] == '\0') return 0;
+
+    if (!Lock(5000)) {
+        return 0;
+    }
+
+    if (!g_shm->pluginActive) {
+        Unlock();
+        return 0;
+    }
+
+    // Wait for any previous command to be processed
+    int retries = 100;
+    while (!g_shm->command.processed && retries > 0) {
+        Unlock();
+        Sleep(10);
+        if (!Lock(1000)) return 0;
+        retries--;
+    }
+
+    if (!g_shm->command.processed) {
+        Unlock();
+        return 0;
+    }
+
+    // Set up command
+    g_shm->command.type = MAM_CMD_CHECK_DATAREF;
+    strcpy_s(g_shm->command.path, MAM_DATAREF_PATH_MAX, path);
+    g_shm->command.resultCode = MAM_OK;
+    g_shm->command.processed = 0;
+
+    Unlock();
+
+    // Wait for plugin to process command
+    retries = 500;
+    while (retries > 0) {
+        Sleep(10);
+        if (!Lock(1000)) return 0;
+
+        if (g_shm->command.processed) {
+            int exists = (g_shm->command.resultCode == MAM_OK) ? 1 : 0;
+            Unlock();
+            return exists;
+        }
+
+        Unlock();
+        retries--;
+    }
+
+    return 0;
+}
+
+MAM_API MamResult MAM_GetString(const char* path, char* outBuffer, int bufferSize)
+{
+    if (!g_shm) return MAM_ERROR_NOT_CONNECTED;
+    if (!path || path[0] == '\0' || !outBuffer || bufferSize <= 0) return MAM_ERROR_INVALID_ID;
+
+    outBuffer[0] = '\0';
+
+    if (!Lock(5000)) {
+        return MAM_ERROR_MUTEX;
+    }
+
+    if (!g_shm->pluginActive) {
+        Unlock();
+        return MAM_ERROR_PLUGIN_NOT_ACTIVE;
+    }
+
+    // Wait for any previous command to be processed
+    int retries = 100;
+    while (!g_shm->command.processed && retries > 0) {
+        Unlock();
+        Sleep(10);
+        if (!Lock(1000)) return MAM_ERROR_MUTEX;
+        retries--;
+    }
+
+    if (!g_shm->command.processed) {
+        Unlock();
+        return MAM_ERROR_MUTEX;
+    }
+
+    // Set up command
+    g_shm->command.type = MAM_CMD_READ_STRING;
+    strcpy_s(g_shm->command.path, MAM_DATAREF_PATH_MAX, path);
+    g_shm->command.resultString[0] = '\0';
+    g_shm->command.resultCode = MAM_OK;
+    g_shm->command.processed = 0;
+
+    Unlock();
+
+    // Wait for plugin to process command
+    retries = 500;
+    while (retries > 0) {
+        Sleep(10);
+        if (!Lock(1000)) return MAM_ERROR_MUTEX;
+
+        if (g_shm->command.processed) {
+            MamResult result = g_shm->command.resultCode;
+            if (result == MAM_OK) {
+                strcpy_s(outBuffer, bufferSize, g_shm->command.resultString);
+            }
+            Unlock();
+            return result;
+        }
+
+        Unlock();
+        retries--;
+    }
+
+    return MAM_ERROR_MUTEX;
+}
+
 MAM_API MamResult MAM_GetDouble(int id, double* outValue)
 {
     if (!g_shm) return MAM_ERROR_NOT_CONNECTED;

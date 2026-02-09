@@ -13,6 +13,7 @@ extern "C" {
 #define MAM_MAX_DATAREFS        256
 #define MAM_PROTOCOL_VERSION    1
 #define MAM_DATAREF_PATH_MAX    256
+#define MAM_STRING_VALUE_MAX    256
 
 // Result codes
 typedef enum {
@@ -39,7 +40,9 @@ typedef enum {
 typedef enum {
     MAM_CMD_NONE = 0,
     MAM_CMD_REGISTER_DATAREF,
-    MAM_CMD_UNREGISTER_DATAREF
+    MAM_CMD_UNREGISTER_DATAREF,
+    MAM_CMD_CHECK_DATAREF,
+    MAM_CMD_READ_STRING
 } MamCommandType;
 
 // Single dataref entry
@@ -63,6 +66,7 @@ typedef struct {
     uint32_t resultId;                  // Result: assigned dataref ID
     MamResult resultCode;               // Result: success or error code
     uint32_t processed;                 // 1 when plugin has processed command
+    char resultString[MAM_STRING_VALUE_MAX]; // Result string for READ_STRING
 } MamCommandEntry;
 
 // Main shared memory structure

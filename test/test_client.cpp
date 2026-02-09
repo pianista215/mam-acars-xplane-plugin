@@ -41,6 +41,31 @@ int main(int argc, char* argv[])
         printf("Make sure the plugin is enabled in X-Plane.\n\n");
     }
 
+    // Read aircraft identification
+    char icao[256] = {0};
+    char author[256] = {0};
+    char descrip[256] = {0};
+    char tailnum[256] = {0};
+
+    printf("Aircraft identification:\n");
+    if (MAM_GetString("sim/aircraft/view/acf_ICAO", icao, sizeof(icao)) == MAM_OK)
+        printf("  ICAO:        %s\n", icao);
+    if (MAM_GetString("sim/aircraft/view/acf_author", author, sizeof(author)) == MAM_OK)
+        printf("  Author:      %s\n", author);
+    if (MAM_GetString("sim/aircraft/view/acf_descrip", descrip, sizeof(descrip)) == MAM_OK)
+        printf("  Description: %s\n", descrip);
+    if (MAM_GetString("sim/aircraft/view/acf_tailnum", tailnum, sizeof(tailnum)) == MAM_OK)
+        printf("  Tail number: %s\n", tailnum);
+    printf("\n");
+
+    // Check aircraft-specific dataref
+    const char* kaDataRef = "KA350/ianim/pSubpanel/strobeLights";
+    if (MAM_DataRefExists(kaDataRef)) {
+        printf("[DataRef Check] %s -> EXISTS\n\n", kaDataRef);
+    } else {
+        printf("[DataRef Check] %s -> NOT FOUND\n\n", kaDataRef);
+    }
+
     // Register datarefs
     printf("Registering datarefs...\n");
     int ids[16] = {0};
