@@ -1,0 +1,19 @@
+# Normalize line endings to LF in the repo, checkout as CRLF on Windows
+* text=auto
+
+# Force LF for scripts that might run on other platforms
+*.sh text eol=lf
+
+# Force CRLF for Windows-only files
+*.bat text eol=crlf
+*.def text eol=crlf
+*.sln text eol=crlf
+
+# Binary files
+*.xpl binary
+*.dll binary
+*.lib binary
+*.exe binary
+*.pdb binary
+*.ico binary
+*.png binary
